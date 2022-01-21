@@ -42,6 +42,9 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
         {
             timerLeft -= Time.deltaTime;
             FormatTime(timerLeft);
+        }else if(timerLeft  <= 0)
+        {
+            Time.timeScale = 0;
         }
     }
 

@@ -12,6 +12,7 @@ public class ChopObjectContainer : MonoBehaviour
     [Header("Objects Stats")]
     public int objectScore;
     public int objectHP;
+    private int defaultObjectHP;
     public ObjType objectType = ObjType.TAP_OBJ;
 
     public InputDetection inputDetection;
@@ -20,7 +21,24 @@ public class ChopObjectContainer : MonoBehaviour
     void Awake()
     {
         GM = GameManager.Instance;
+        defaultObjectHP = objectHP;
     }
+
+    void Update()
+{
+    if (Input.GetMouseButtonDown(0) && objectType == ObjType.TAP_OBJ)
+    {
+        Vector3 raycast = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        RaycastHit2D raycastHit = Physics2D.Raycast(raycast, Camera.main.transform.forward);
+        if (raycastHit.collider != null)
+        {
+            if (raycastHit.collider.CompareTag("Object"))
+            {
+                HitObject();
+            }
+        }
+    }
+}
 
     private void HitObject()
     {
@@ -31,6 +49,8 @@ public class ChopObjectContainer : MonoBehaviour
 
             GM.Score += objectScore;
             gameObject.SetActive(false);
+            transform.position = Vector3.zero;
+            objectHP = defaultObjectHP;
             GM.SpawnNewObject();
         }
     }
@@ -40,9 +60,6 @@ public class ChopObjectContainer : MonoBehaviour
         if(coll.CompareTag("Player"))
         {
             if(objectType == ObjType.SWIPE_OBJ && inputDetection.touchState != TouchState.TAP)
-            {
-                HitObject();
-            }else if(objectType == ObjType.TAP_OBJ && inputDetection.touchState == TouchState.TAP)
             {
                 HitObject();
             }
